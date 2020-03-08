@@ -42,7 +42,7 @@ func Init() {
 			// Send the result
 			if !strings.HasPrefix(string(message), "ACK") {
 				res, cmdName := commands.HandleCommand(message)
-				log.Println(cmdName + " " + res)
+				log.Println(cmdName + " " + strings.TrimSpace(res))
 				chk(c.WriteMessage(websocket.TextMessage, []byte(cmdName+" "+res)))
 			} else {
 				log.Println(string(message))
