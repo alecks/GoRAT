@@ -3,8 +3,10 @@
 
 package server
 
+import "log"
+
 func chk(e error) {
 	if e != nil {
-		panic(e)
+		log.Fatalln(e)
 	}
 }

@@ -27,9 +27,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	// Upgrade the protocol
 	c, err = upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Fatalln(err) // not panicking; could reconnect
-	}
+	chk(err)
 	defer c.Close()
 
 	// Test by getting the hostname
