@@ -24,7 +24,7 @@ func main() {
 	dbFilename := os.Getenv("DB_FILENAME")
 
 	// Check whether to run as server or client
-	if len(os.Args) != 2 || os.Args[1] != "--server" {
+	if len(os.Args) <= 1 || os.Args[1] != "server" {
 		// Write to a file specifying whether the previous execution was as client
 		if os.Getenv("DEV_MODE") != "TRUE" {
 			chk(ioutil.WriteFile(dbFilename, []byte("PRUN CLIENT"), 0644))
