@@ -19,15 +19,27 @@ func waitForMode(c *websocket.Conn) {
 
 	if stripped == "e" {
 		execMode(c)
+	} else if stripped == "c" {
+		cmdMode(c)
 	}
 }
 
 func execMode(c *websocket.Conn) {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("> ")
+	fmt.Print("Execute $ ")
 	text, _ := reader.ReadString('\n')
 	stripped := strings.TrimSpace(text)
 
 	c.WriteMessage(websocket.TextMessage, []byte("EXEC "+stripped))
+	waitForMode(c)
+}
+
+func cmdMode(c *websocket.Conn) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Command $ ")
+	text, _ := reader.ReadString('\n')
+	stripped := strings.TrimSpace(text)
+
+	c.WriteMessage(websocket.TextMessage, []byte(stripped))
 	waitForMode(c)
 }

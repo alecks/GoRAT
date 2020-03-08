@@ -44,10 +44,18 @@ func Init() {
 			// Send the result
 			if !strings.HasPrefix(string(message), "ACK") {
 				res, cmdName := commands.HandleCommand(message)
-				log.Println(cmdName + " " + strings.TrimSpace(res))
+				if cmdName == "SCREENSHOT" {
+					log.Println("SCREENSHOT <image data>")
+				} else {
+					log.Println(cmdName + " " + strings.TrimSpace(res))
+				}
 				chk(c.WriteMessage(websocket.TextMessage, []byte(cmdName+" "+res)))
 			} else {
-				log.Println(string(message))
+				if strings.Split(string(message), " ")[1] == "SCREENSHOT" {
+					log.Println("SCREENSHOT <image data>")
+				} else {
+					log.Println(string(message))
+				}
 			}
 		}
 	}()

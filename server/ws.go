@@ -4,6 +4,7 @@
 package server
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -55,7 +56,13 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			log.Println(c.RemoteAddr(), strings.TrimSpace(string(message)))
+			splitted := strings.Split(string(message), " ")
+			if splitted[0] == "SCREENSHOT" {
+				log.Println(c.RemoteAddr(), "SCREENSHOT <image data>")
+				ioutil.WriteFile("./screenshots/"+splitted[1], []byte(strings.Join(splitted[2:], " ")), 0644)
+			} else {
+				log.Println(c.RemoteAddr(), strings.TrimSpace(string(message)))
+			}
 			chk(c.WriteMessage(websocket.TextMessage, []byte("ACK "+string(message)))) // TODO: make this more efficient
 		}
 	}()
@@ -63,4 +70,5 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	// Clean closure
 	<-interrupt
 	chk(c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "")))
+	os.Exit(0)
 }

@@ -4,10 +4,16 @@
 package commands
 
 import (
+	"bytes"
+	"fmt"
+	"image/png"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/kbinani/screenshot"
 )
 
 var commands = []*command{
@@ -43,6 +49,34 @@ var commands = []*command{
 			}
 
 			return out
+		},
+	},
+	&command{
+		Identifier: "SCREENSHOT",
+		Function: func(message []byte) []byte {
+			n := screenshot.NumActiveDisplays()
+			slice := strings.Split(string(message), " ")
+			display := 0
+			if len(slice) >= 2 {
+				display, err := strconv.Atoi(slice[1])
+				chk(err)
+
+				if display > n-1 {
+					display = 0
+				}
+			}
+			display = 0
+
+			bounds := screenshot.GetDisplayBounds(display)
+
+			img, err := screenshot.CaptureRect(bounds)
+			chk(err)
+
+			var buf bytes.Buffer
+			png.Encode(&buf, img)
+
+			fileName := fmt.Sprintf("%d_%s.png", display, strings.ReplaceAll(time.Now().String(), " ", "_"))
+			return []byte(fileName + " " + string(buf.Bytes())) // TODO: make more efficient
 		},
 	},
 }
