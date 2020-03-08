@@ -21,6 +21,8 @@ var c *websocket.Conn
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 
+	pingLogs := os.Getenv("PING_LOGS")
+
 	// Wait for interrupt
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -39,12 +41,15 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			// Get message
 			_, message, err := c.ReadMessage()
-			chk(err)
+			if err != nil {
+				chksoft(err)
+				break
+			}
 
 			// Exclusive bidirectional ping cmd
 			if strings.HasPrefix(string(message), "PING") {
 				res, cmdName := commands.HandleCommand(message)
-				if pingLogs {
+				if pingLogs == "TRUE" {
 					log.Println(cmdName + " " + res)
 				}
 				continue

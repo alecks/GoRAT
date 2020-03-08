@@ -12,13 +12,21 @@ import (
 
 	"github.com/fjah/GoRAT/client"
 	"github.com/fjah/GoRAT/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env
+	err := godotenv.Load()
+	chk(err)
+
+	// Get the db filename from .env
+	dbFilename := os.Getenv("DB_FILENAME")
+
 	// Check whether to run as server or client
 	if len(os.Args) != 2 || os.Args[1] != "--server" {
 		// Write to a file specifying whether the previous execution was as client
-		if !devMode {
+		if os.Getenv("DEV_MODE") != "TRUE" {
 			chk(ioutil.WriteFile(dbFilename, []byte("PRUN CLIENT"), 0644))
 		}
 

@@ -17,6 +17,8 @@ import (
 
 // Init initialises the client
 func Init() {
+	serverAddr := os.Getenv("SERVER_ADDRESS")
+
 	// Wait for interrupt
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)

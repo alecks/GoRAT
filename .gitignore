@@ -5,3 +5,6 @@ go_build_GoRAT
 # Variables
 deps.store
 .env
+
+# Other
+.DS_Store
