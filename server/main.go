@@ -50,7 +50,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			log.Println(string(message))
+			log.Println(c.RemoteAddr(), strings.TrimSpace(string(message)))
 			chk(c.WriteMessage(websocket.TextMessage, []byte("ACK "+string(message)))) // TODO: make this more efficient
 		}
 	}()

