@@ -4,5 +4,10 @@
 package server
 
 const (
-	pingLogs = false
+	pingLogs    = false
+	callbackURL = "http://localhost:8080/auth/discord/callback"
+)
+
+var (
+	permittedUsers = []string{"251411894894592003"}
 )

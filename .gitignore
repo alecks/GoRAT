@@ -2,5 +2,6 @@
 GoRAT
 go_build_GoRAT
 
-# "DB" Files
+# Variables
 deps.store
+.env
