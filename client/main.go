@@ -62,7 +62,6 @@ func Init() {
 			tString := "PING " + t.String()
 
 			// Send a ping message
-			log.Println(tString)
 			chk(c.WriteMessage(websocket.TextMessage, []byte(tString)))
 		case <-interrupt:
 			// Cleanly close the connection
