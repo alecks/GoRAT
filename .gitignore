@@ -1,3 +1,6 @@
 # Executables
 GoRAT
 go_build_GoRAT
+
+# "DB" Files
+deps.store

@@ -59,9 +59,11 @@ func Init() {
 		case <-done:
 			return
 		case t := <-ticker.C:
+			tString := "PING " + t.String()
+
 			// Send a ping message
-			log.Println("PING")
-			chk(c.WriteMessage(websocket.TextMessage, []byte("PING "+t.String())))
+			log.Println(tString)
+			chk(c.WriteMessage(websocket.TextMessage, []byte(tString)))
 		case <-interrupt:
 			// Cleanly close the connection
 			chk(c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "")))
