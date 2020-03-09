@@ -31,6 +31,14 @@ func Init() {
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		chksoft(err)
+
+		for {
+			select {
+			case <-interrupt:
+				os.Exit(0)
+			}
+		}
+
 		time.Sleep(10 * time.Second)
 		Init()
 		return
@@ -85,6 +93,7 @@ func Init() {
 			case <-done:
 			case <-time.After(time.Second):
 			}
+			return
 		}
 	}
 }
