@@ -15,12 +15,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var interrupt chan os.Signal
+
 // Init initialises the client
 func Init() {
 	serverAddr := os.Getenv("SERVER_ADDRESS")
 
 	// Wait for interrupt
-	interrupt := make(chan os.Signal, 1)
+	interrupt = make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
 	// Create the url
@@ -32,17 +34,7 @@ func Init() {
 	if err != nil {
 		chksoft(err)
 
-		go func() {
-			for {
-				select {
-				case <-interrupt:
-					os.Exit(0)
-				}
-			}
-		}()
-
-		time.Sleep(10 * time.Second)
-		Init()
+		reconnect()
 		return
 	}
 	defer c.Close()
@@ -54,7 +46,11 @@ func Init() {
 		for {
 			// Read messages
 			_, message, err := c.ReadMessage()
-			chk(err)
+			if err != nil {
+				chksoft(err)
+				reconnect()
+				return
+			}
 
 			// Send the result
 			if !strings.HasPrefix(string(message), "ACK") {
@@ -87,7 +83,11 @@ func Init() {
 			tString := "PING " + t.String()
 
 			// Send a ping message
-			chk(c.WriteMessage(websocket.TextMessage, []byte(tString)))
+			if c.WriteMessage(websocket.TextMessage, []byte(tString)) != nil {
+				chksoft(err)
+				reconnect()
+				return
+			}
 		case <-interrupt:
 			// Cleanly close the connection
 			chk(c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "")))
@@ -95,6 +95,7 @@ func Init() {
 			case <-done:
 			case <-time.After(time.Second):
 			}
+
 			return
 		}
 	}
