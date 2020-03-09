@@ -10,3 +10,9 @@ func chk(e error) {
 		log.Fatalln(e)
 	}
 }
+
+func chksoft(e error) {
+	if e != nil {
+		log.Println(e)
+	}
+}

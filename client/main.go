@@ -29,7 +29,12 @@ func Init() {
 
 	// Connect
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	chk(err)
+	if err != nil {
+		chksoft(err)
+		time.Sleep(10 * time.Second)
+		Init()
+		return
+	}
 	defer c.Close()
 
 	done := make(chan struct{})
@@ -80,7 +85,6 @@ func Init() {
 			case <-done:
 			case <-time.After(time.Second):
 			}
-			return
 		}
 	}
 }
