@@ -32,12 +32,14 @@ func Init() {
 	if err != nil {
 		chksoft(err)
 
-		for {
-			select {
-			case <-interrupt:
-				os.Exit(0)
+		go func() {
+			for {
+				select {
+				case <-interrupt:
+					os.Exit(0)
+				}
 			}
-		}
+		}()
 
 		time.Sleep(10 * time.Second)
 		Init()
